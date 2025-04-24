@@ -208,3 +208,27 @@ predictions = rf_model.predict(review_vectors)
 # Print results
 for review, prediction in zip(reviews, predictions):
     print(f"Review: {review} → Prediction: {prediction}")
+
+
+# 1. Load data
+import pandas as pd
+df = pd.read_csv("main_project.csv")
+
+# 2. Preprocess data
+from sklearn.feature_extraction.text import TfidfVectorizer
+X = df["Review Text"]
+y = df["Sentiment"]
+vectorizer = TfidfVectorizer()
+X_vec = vectorizer.fit_transform(X)
+
+# 3. Train model
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X_vec, y, test_size=0.2, random_state=42)
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+# 4. Save model
+import joblib
+joblib.dump(model, "model.pkl")
+joblib.dump(vectorizer, "vectorizer.pkl")
